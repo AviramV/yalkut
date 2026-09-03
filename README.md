@@ -69,12 +69,24 @@ matching names.
 
 Run `node test.js` after editing.
 
-## Two things to confirm with the teacher
+## Modelling decisions on record
 
-1. **Is a `קלסר חצי שקוף עם 2 שמרדפים` one binder per subject, or one shared
-   across all five that list it?** Same question for
-   `מחברת 10 שורות עטיפה שקופה` (four subjects). Currently modelled as
-   separate (`shared: false`) — over-packing is recoverable, forgetting is
-   not. If they are shared, flip `shared` to `true` on those two items.
-2. **Item 26 on the school list is covered by highlighter** and is not in
-   `data.json`.
+Confirmed with the school, so they do not need re-litigating:
+
+- **`shared: false` on `binder-2sh` and `nb-10lines` is correct.** Those are a
+  separate binder and notebook per subject, not one shared across the five and
+  four subjects that list them. A day with two such subjects correctly shows
+  two rows and `צריך 2 כאלה`.
+- **Item 26 on the main equipment sheet was deleted by the school on purpose.**
+  It is intentionally absent from `data.json`.
+- **The art lesson does not repeat the pencil case.** The art sheet lists
+  עפרון, מחק and סרגל, but all three are already in `pencilCase` and get
+  ticked every day, so they are not duplicated into the אומנות subject — a
+  note on the subject points at the קלמר instead. `צבעי עיפרון` *is* listed
+  separately, because the art sheet distinguishes it from
+  `צבעי פנדה או טושים` while the pencil case only says the generic `צבעים`.
+
+## Sources
+
+- `רשימת ציוד נדרש לכיתה א' - לפי מקצועות` — the 25 subjects.
+- `רשימת ציוד לשיעור אמנות` — the `supplies` group.

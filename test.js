@@ -57,6 +57,47 @@ assert.strictEqual(new Set(all.map((i) => i.key)).size, all.length);
 // Subjects with no equipment contribute no rows.
 assert.strictEqual(instancesFor(['אקולוגיה', 'חוקרים צעירים']).length, 0);
 
+// ---- data.json integrity ----
+// This is the file that gets edited most, and buildInstances skips ids it
+// cannot resolve — so a typo would silently drop equipment from a packing
+// list with no error anywhere. Fail loudly here instead.
+const itemIds = new Set(data.items.map((i) => i.id));
+const groupIds = new Set(data.groups.map((g) => g.id));
+
+assert.strictEqual(itemIds.size, data.items.length, 'duplicate item id');
+assert.strictEqual(new Set(data.subjects.map((s) => s.id)).size, data.subjects.length,
+  'duplicate subject id');
+
+for (const s of data.subjects) {
+  for (const id of s.items) {
+    assert.ok(itemIds.has(id), `subject "${s.name}" references unknown item "${id}"`);
+  }
+}
+for (const i of data.items) {
+  assert.ok(groupIds.has(i.group), `item "${i.id}" has unknown group "${i.group}"`);
+  assert.ok(typeof i.shared === 'boolean', `item "${i.id}" is missing the shared flag`);
+  if (i.cover) assert.ok(data.covers[i.cover], `item "${i.id}" has unknown cover "${i.cover}"`);
+}
+// Every group must be reachable, or it renders as an empty heading.
+for (const g of data.groups) {
+  assert.ok(data.items.some((i) => i.group === g.id), `group "${g.id}" has no items`);
+}
+
+// ---- art lesson (added from the art equipment sheet) ----
+const art = instancesFor(['אומנות']);
+assert.deepStrictEqual(art.map((i) => i.item.name),
+  ['בלוק ציור', 'צבעי פנדה או טושים', 'צבעי גואש ומכחול', 'צבעי עיפרון']);
+
+// עפרון / מחק / סרגל come from the permanent pencil case, so the art lesson
+// must not add a second checkbox for any of them.
+// Matched on a stem, not equality: the pencil case writes "עפרונות" where the
+// art sheet writes "עפרון" — different nun, so substring matching would miss.
+const pencilText = data.pencilCase.map((p) => p.text).join(' ');
+for (const [artName, stem] of [['עפרון', 'עפרונ'], ['מחק', 'מחק'], ['סרגל', 'סרגל']]) {
+  assert.ok(pencilText.includes(stem), `pencil case should already carry ${artName}`);
+  assert.ok(!art.some((i) => i.item.name === artName), `${artName} duplicated into art lesson`);
+}
+
 // ---- release hygiene ----
 // The footer version and the cache key must agree, or a release ships with
 // stale assets under a name that says otherwise.

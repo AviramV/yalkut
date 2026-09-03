@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "title": "מארגן הילקוט",
   "subtitle": "כיתה א' • לפי רשימת הציוד הרשמית",
   "_notes": [
@@ -7,7 +7,9 @@
     "shared=true  => פריט פיזי אחד שמשרת כמה מקצועות (סימון אחד).",
     "shared=false => פריט נפרד לכל מקצוע (סימון לכל מקצוע), גם אם הוא נראה זהה.",
     "לאימות מול המורה: האם 'קלסר חצי שקוף' ו'מחברת 10 שורות עטיפה שקופה' הם אחד לכל מקצוע או משותפים.",
-    "פריט 26 ברשימה המקורית מוסתר בטוש ולא הוזן."
+    "מקור נוסף: 'רשימת ציוד לשיעור אמנות'.",
+    "פריט 26 ברשימה המקורית נמחק בכוונה על ידי בית הספר.",
+    "בשיעור אמנות: עפרון, מחק וסרגל כבר ברשימת הקלמר הקבועה ולכן לא כפולים כאן."
   ],
 
   "covers": {
@@ -21,7 +23,8 @@
   "groups": [
     { "id": "wear",     "label": "ללבוש / להביא על הגוף", "icon": "👟" },
     { "id": "binders",  "label": "מחברות וקלסרים",         "icon": "📓" },
-    { "id": "workbooks","label": "חוברות",                 "icon": "📗" }
+    { "id": "workbooks","label": "חוברות",                 "icon": "📗" },
+    { "id": "supplies", "label": "ציוד יצירה",             "icon": "🎨" }
   ],
 
   "items": [
@@ -44,7 +47,12 @@
     { "id": "sport-pants",    "group": "wear", "name": "מכנס נוח לספורט",   "cover": null, "shared": true },
     { "id": "sport-shoes",    "group": "wear", "name": "נעלי ספורט",        "cover": null, "shared": true },
     { "id": "sport-hat",      "group": "wear", "name": "כובע (בימים חמים)", "cover": null, "shared": true },
-    { "id": "dance-clothes",  "group": "wear", "name": "ביגוד נוח לריקוד",  "cover": null, "shared": true }
+    { "id": "dance-clothes",  "group": "wear", "name": "ביגוד נוח לריקוד",  "cover": null, "shared": true },
+
+    { "id": "art-pad",      "group": "supplies", "name": "בלוק ציור",            "cover": null, "shared": true },
+    { "id": "art-markers",  "group": "supplies", "name": "צבעי פנדה או טושים",   "cover": null, "shared": true },
+    { "id": "art-gouache",  "group": "supplies", "name": "צבעי גואש ומכחול",     "cover": null, "shared": true },
+    { "id": "art-pencils",  "group": "supplies", "name": "צבעי עיפרון",          "cover": null, "shared": true }
   ],
 
   "subjects": [
@@ -53,7 +61,7 @@
     { "id": 3,  "name": "לוגיקה",      "keywords": ["לוגיקה"],                                        "items": ["nb-squares"] },
     { "id": 4,  "name": "אנגלית",      "keywords": ["אנגלית", "english"],                             "items": ["binder-2sh"] },
     { "id": 5,  "name": "שפה",         "keywords": ["שפה", "עברית", "קמץ פתח"],                       "items": ["nb-lang-smart", "nb-lang-sounds", "wb-kamatz"], "note": "2 מחברות בצבע אדום: חכמה שורות + חלקה לצלילים" },
-    { "id": 6,  "name": "אומנות",      "keywords": ["אומנות", "אמנות", "ציור"],                       "items": [], "note": "ללא ציוד בשלב זה" },
+    { "id": 6,  "name": "אומנות",      "keywords": ["אומנות", "אמנות", "ציור"],                       "items": ["art-pad", "art-markers", "art-gouache", "art-pencils"], "note": "עפרון, מחק וסרגל כבר בקלמר הקבוע" },
     { "id": 7,  "name": "חינוך גופני", "keywords": ["חינוך גופני", "ספורט", "חנ\"ג", "חנג"],          "items": ["sport-pants", "sport-shoes", "sport-hat"], "note": "הקפדה על בקבוק מים וכובע בימים חמים" },
     { "id": 8,  "name": "קסם התיאטרון","keywords": ["קסם התיאטרון", "תיאטרון", "תאטרון"],             "items": ["binder-2sh"] },
     { "id": 9,  "name": "אנגלית אומנותית", "keywords": ["אנגלית אומנותית", "אנגלית אמנותית"],         "items": [] },
