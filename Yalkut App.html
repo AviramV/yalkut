@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>מארגן הילקוט החכם - כיתה א'</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Rubik & Heebo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Rubik', sans-serif;
+    }
+    .font-heebo {
+      font-family: 'Heebo', sans-serif;
+    }
+    .badge-yellow { background-color: #FEF08A; color: #854D0E; border: 1px solid #FACC15; }
+    .badge-green { background-color: #BBF7D0; color: #166534; border: 1px solid #4ADE80; }
+    .badge-red { background-color: #FECACA; color: #991B1B; border: 1px solid #F87171; }
+    .badge-clear { background-color: #F1F5F9; color: #475569; border: 1px solid #CBD5E1; }
+    .badge-none { background-color: #F8FAFC; color: #64748B; border: 1px solid #E2E8F0; }
+    
+    /* Custom scrollbar */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+
+  <script>
+    // Hardened database with longest match first & no loose keywords
+    const SUBJECTS_DB = [
+      {
+        id: 1,
+        name: "חשבון",
+        keywords: ["חשבון", "מתמטיקה", "שבילים"],
+        coverColor: "yellow",
+        coverName: "עטיפה צהובה",
+        notebook: "מחברת חכמה משבצות לכיתה א' עם עטיפה צהובה",
+        workbooks: ["חוברת שבילים חדשים 1", "חוברת אביזרים"],
+        specialNotes: ""
+      },
+      {
+        id: 2,
+        name: "מדעים",
+        keywords: ["מדעים", "פלא טבע 1"],
+        coverColor: "green",
+        coverName: "עטיפה ירוקה",
+        notebook: "מחברת 10 שורות עטיפה ירוקה",
+        workbooks: ["חוברת פלא טבע 1"],
+        specialNotes: ""
+      },
+      {
+        id: 3,
+        name: "לוגיקה",
+        keywords: ["לוגיקה"],
+        coverColor: "clear",
+        coverName: "עטיפה שקופה",
+        notebook: "מחברת משבצות עטיפה שקופה",
+        workbooks: [],
+        specialNotes: ""
+      },
+      {
+        id: 4,
+        name: "אנגלית",
+        keywords: ["אנגלית", "english"],
+        coverColor: "clear",
+        coverName: "חצי שקוף",
+        notebook: "קלסר חצי שקוף עם 2 שמרדפים",
+        workbooks: [],
+        specialNotes: ""
+      },
+      {
+        id: 5,
+        name: "שפה",
+        keywords: ["שפה", "עברית", "קמץ פתח"],
+        coverColor: "red",
+        coverName: "עטיפה אדומה",
+        notebook: "מחברת חכמה שורות עטיפה אדומה, מחברת חלקה לצלילים עטיפה אדומה",
+        workbooks: ["חוברת קמץ פתח"],
+        specialNotes: "שימו לב: 2 מחברות בצבע אדום (חכמה שורות + חלקה לצלילים)"
+      },
+      {
+        id: 6,
+        name: "אומנות",
+        keywords: ["אומנות", "אמנות", "ציור"],
+        coverColor: "none",
+        coverName: "ללא",
+        notebook: "ללא ציוד בשלב זה",
+        workbooks: [],
+        specialNotes: ""
+      },
+      {
+        id: 7,
+        name: "חינוך גופני",
+        keywords: ["חינוך גופני", "ספורט", "חנ\"ג", "חנג"],
+        coverColor: "none",
+        coverName: "ספורט",
+        notebook: "ללא מחברת",
+        workbooks: [],
+        isSport: true,
+        specialNotes: "מכנס נוח לספורט, נעלי ספורט, הקפדה על בקבוק מים וכובע בימים חמים."
+      },
+      {
+        id: 8,
+        name: "קסם התיאטרון",
+        keywords: ["קסם התיאטרון", "תיאטרון", "תאטרון"],
+        coverColor: "clear",
+        coverName: "חצי שקוף",
+        notebook: "קלסר חצי שקוף עם 2 שמרדפים",
+        workbooks: [],
+        specialNotes: ""
+      },
+      {
+        id: 9,
+        name: "אנגלית אומנותית",
+        keywords: ["אנגלית אומנותית", "אנגלית אמנותית"],
+        coverColor: "none",
+        coverName: "ללא",
+        notebook: "ללא ציוד",
+        workbooks: [],
+        specialNotes: ""
+      },
+      {
+        id: 10,
+        name: "אקולוגיה",
+        keywords: ["אקולוגיה"],
+        coverColor: "none",
+        coverName: "ללא",
+        notebook: "ללא ציוד",
+        workbooks: [],
+        specialNotes: ""
+      },
+      {
+        id: 11,
+        name: "אוריגמטריה",
+        keywords: ["אוריגמטריה", "אוריגמי"],
+        coverColor: "clear",
+        coverName: "חצי שקוף",
+        notebook: "קלסר חצי שקוף עם 2 שמרדפים",
+        workbooks: [],
+        specialNotes: ""
+      },
+      {
+        id: 12,
+        name: "ריקוד",
+        keywords: ["ריקוד", "מחול"],
+        coverColor: "none",
+        coverName: "ספורט",
+        notebook: "ללא מחברת",
+        workbooks: [],
+        isSport: true,
+        specialNotes: "ביגוד נוח לריקוד ונעלי ספורט."
+      },
+      {
+        id: 13,
+        name: "חוקרים צעירים",
+        keywords: ["חוקרים צעירים"],
+        coverColor: "none",
+        coverName: "ללא",
+        notebook: "ללא ציוד",
+        workbooks: [],
+        specialNotes: ""
+      },
+      {
+        id: 14,
+        name: "רופאים צעירים",
+        keywords: ["רופאים צעירים"],
+        coverColor: "none",
+        coverName: "ללא",
+        notebook: "ללא ציוד",
+        workbooks: [],
+        specialNotes: ""
+      },
+      {
+        id: 15,
+        name: "משחקים מן העתיד",
+        keywords: ["משחקים מן העתיד", "משחקי העתיד"],
+        coverColor: "none",
+        coverName: "ללא",
+        notebook: "ללא ציוד",
+        workbooks: [],
+        specialNotes: ""
+      },
+      {
+        id: 16,
+        name: "מפתח הלב וכישורי חיים",
+        keywords: ["מפתח הלב וכישורי חיים", "מפתח הלב", "כישורי חיים"],
+        coverColor: "clear",
+        coverName: "עטיפה שקופה",
+        notebook: "מחברת 10 שורות עטיפה שקופה (מחברת אחת משותפת לשני המקצועות)",
+        workbooks: [],
+        specialNotes: "מחברת אחת משותפת למפתח הלב ולכישורי חיים"
+      },
+      {
+        id: 17,
+        name: "זה\"ב",
+        keywords: ["זה\"ב", "זהב", "בטיחות בדרכים"],
+        coverColor: "clear",
+        coverName: "עטיפה שקופה",
+        notebook: "מחברת 10 שורות עטיפה שקופה",
+        workbooks: [],
+        specialNotes: ""
+      },
+      {
+        id: 18,
+        name: "מוזיקה",
+        keywords: ["מוזיקה", "מוסיקה", "נגינה"],
+        coverColor: "clear",
+        coverName: "עטיפה שקופה",
+        notebook: "מחברת חלקה עטיפה שקופה",
+        workbooks: [],
+        specialNotes: ""
+      },
+      {
+        id: 19,
+        name: "כימיה",
+        keywords: ["כימיה"],
+        coverColor: "clear",
+        coverName: "עטיפה שקופה",
+        notebook: "מחברת משבצות עטיפה שקופה",
+        workbooks: [],
+        specialNotes: ""
+      },
+      {
+        id: 20,
+        name: "פיזיקה",
+        keywords: ["פיזיקה", "פיסיקה"],
+        coverColor: "clear",
+        coverName: "עטיפה שקופה",
+        notebook: "מחברת 10 שורות עטיפה שקופה",
+        workbooks: [],
+        specialNotes: ""
+      },
+      {
+        id: 21,
+        name: "בריאות גוף האדם",
+        keywords: ["בריאות גוף האדם", "בריאות הגוף", "גוף האדם"],
+        coverColor: "clear",
+        coverName: "חצי שקוף",
+        notebook: "קלסר חצי שקוף ו-2 שמרדפים",
+        workbooks: ["חוברת פלא טבע 5"],
+        specialNotes: ""
+      },
+      {
+        id: 22,
+        name: "אתגרי הלוגיקה",
+        keywords: ["אתגרי הלוגיקה", "אתגרי לוגיקה"],
+        coverColor: "clear",
+        coverName: "חצי שקוף",
+        notebook: "קלסר חצי שקוף ו-2 שמרדפים",
+        workbooks: [],
+        specialNotes: ""
+      },
+      {
+        id: 23,
+        name: "אשכולות חשיבה",
+        keywords: ["אשכולות חשיבה", "אשכולות"],
+        coverColor: "none",
+        coverName: "ללא",
+        notebook: "ללא ציוד",
+        workbooks: [],
+        specialNotes: ""
+      },
+      {
+        id: 24,
+        name: "אוריינות דיגיטלית",
+        keywords: ["אוריינות דיגיטלית", "מחשבים", "אוריינות"],
+        coverColor: "clear",
+        coverName: "עטיפה שקופה",
+        notebook: "מחברת 10 שורות עטיפה שקופה",
+        workbooks: [],
+        specialNotes: ""
+      },
+      {
+        id: 25,
+        name: "הנדסה",
+        keywords: ["הנדסה", "גיאומטריה", "שבילים הנדסה"],
+        coverColor: "none",
+        coverName: "משובצת",
+        notebook: "מחברת משובצת",
+        workbooks: ["חוברת שבילים חדשים 1"],
+        specialNotes: ""
+      }
+    ];
+
+    // Constant Stationery (בקלמר)
+    const PENCIL_CASE_ITEMS = [
+      { text: "3 עפרונות מחודדים מדי יום", icon: "✏️" },
+      { text: "מחק", icon: "🧼" },
+      { text: "מחדד (עדיף עם מיכל)", icon: "⚙️" },
+      { text: "צבעים", icon: "🎨" },
+      { text: "מספריים", icon: "✂️" },
+      { text: "סרגל", icon: "📏" },
+      { text: "דבק סטיק", icon: "🧴" }
+    ];
+
+    // Constant Schoolbag Essentials (בנוסף קבוע בילקוט)
+    const FIXED_BAG_ITEMS = [
+      { text: "לוח מחיק + טוש מחיק + ספוג ללוח", icon: "📋" },
+      { text: "תיקיית גומי (לדפים ודפי קשר)", icon: "📁" },
+      { text: "מגבונים לשימוש אישי", icon: "🧻" },
+      { text: "מחברת קשר 10 שורות עטיפה שקופה", icon: "📓" },
+      { text: "ארוחות כמספר ההפסקות במהלך היום", icon: "🥪" },
+      { text: "בקבוק מים מלא", icon: "💧" }
+    ];
+
+    // Weekly schedule template stored in localStorage
+    const STORAGE_KEY_WEEKLY = "bag_organizer_weekly_v1";
+    let weeklySchedule = {
+      'א': "שפה, חשבון, חינוך גופני, מדעים",
+      'ב': "שפה, הנדסה, אנגלית, מפתח הלב",
+      'ג': "חשבון, שפה, מוזיקה, קסם התיאטרון",
+      'ד': "שפה, חשבון, חינוך גופני, אוריינות דיגיטלית",
+      'ה': "מדעים, שפה, אוריגמטריה, בריאות גוף האדם",
+      'ו': "שפה, חשבון, מפתח הלב"
+    };
+
+    let activeSubjectIds = new Set();
+    let packedItemsState = {};
+  </script>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen">
+
+  <header class="bg-indigo-700 text-white shadow-md sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <span class="text-3xl">🎒</span>
+        <div>
+          <h1 class="text-xl md:text-2xl font-black tracking-tight leading-tight">מארגן הילקוט החכם</h1>
+          <p class="text-xs text-indigo-100 font-light">כיתה א' • הכנת תיק מדויקת לפי רשימת הציוד הרשמית</p>
+        </div>
+      </div>
+      
+      <!-- Top View Tabs -->
+      <nav class="flex items-center bg-indigo-900/40 p-1 rounded-xl text-xs md:text-sm font-medium">
+        <button id="tab-daily" onclick="switchView('daily')" class="px-4 py-2 rounded-lg transition-all shadow-sm bg-white text-indigo-700 font-bold">
+          📅 אריזה יומית
+        </button>
+        <button id="tab-weekly" onclick="switchView('weekly')" class="px-4 py-2 rounded-lg transition-all text-indigo-100 hover:text-white">
+          🗓️ מערכת שבועית
+        </button>
+        <button id="tab-catalog" onclick="switchView('catalog')" class="px-4 py-2 rounded-lg transition-all text-indigo-100 hover:text-white">
+          📚 כל המקצועות (25)
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
+
+    <section id="view-daily" class="space-y-6">
+      
+      <!-- Top banner for fast day loading -->
+      <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200/80 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <span class="text-indigo-600 font-bold text-sm">טעינה מהירה מתוך המערכת:</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-1.5">
+          <button onclick="loadDaySchedule('א')" class="day-chip px-3 py-1.5 text-xs rounded-lg border border-indigo-600 bg-indigo-600 text-white font-bold transition shadow-sm">יום א'</button>
+          <button onclick="loadDaySchedule('ב')" class="day-chip px-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-white hover:bg-indigo-50 text-slate-700 font-medium transition">יום ב'</button>
+          <button onclick="loadDaySchedule('ג')" class="day-chip px-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-white hover:bg-indigo-50 text-slate-700 font-medium transition">יום ג'</button>
+          <button onclick="loadDaySchedule('ד')" class="day-chip px-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-white hover:bg-indigo-50 text-slate-700 font-medium transition">יום ד'</button>
+          <button onclick="loadDaySchedule('ה')" class="day-chip px-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-white hover:bg-indigo-50 text-slate-700 font-medium transition">יום ה'</button>
+          <button onclick="loadDaySchedule('ו')" class="day-chip px-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-white hover:bg-indigo-50 text-slate-700 font-medium transition">יום ו'</button>
+        </div>
+      </div>
+
+      <!-- Schedule Input Card -->
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between mb-3">
+          <label for="scheduleInput" class="font-bold text-slate-800 text-base md:text-lg flex items-center gap-2">
+            <span>📝</span>
+            <span>מערכת השיעורים להיום</span>
+          </label>
+          <span id="recognizedCount" class="text-xs bg-indigo-50 text-indigo-700 font-bold px-2.5 py-1 rounded-full border border-indigo-200">
+            0 מקצועות זוהו
+          </span>
+        </div>
+
+        <p class="text-xs text-slate-500 mb-2 font-heebo">
+          הדביקו הודעה מהוואטסאפ או רשימת שיעורים (למשל: "חשבון, שפה, אנגלית אומנותית, מדעים"):
+        </p>
+
+        <textarea 
+          id="scheduleInput" 
+          rows="2" 
+          oninput="handleScheduleInput()"
+          placeholder="לדוגמה: שיעור ראשון שפה, חשבון, חינוך גופני, אנגלית אומנותית..." 
+          class="w-full border border-slate-300 rounded-xl p-3 text-sm md:text-base outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition font-heebo"
+        ></textarea>
+
+        <!-- Quick Subject Chips Container -->
+        <div class="mt-3 pt-3 border-t border-slate-100">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold text-slate-600">בחירה מהירה בלחיצה (הוסף / הסר):</span>
+            <button onclick="clearInput()" class="text-xs text-rose-600 hover:text-rose-800 underline font-medium">נקה הכל 🗑️</button>
+          </div>
+          <div id="quickChipsContainer" class="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto custom-scrollbar p-1">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Sport Alert Notice (Hidden by default) -->
+      <div id="specialAlertNotice" class="hidden bg-amber-50 border-r-4 border-amber-500 p-4 rounded-xl shadow-sm flex items-start gap-3">
+        <span class="text-2xl">👟</span>
+        <div>
+          <h4 class="font-bold text-amber-900 text-sm">יום ספורט / תנועה מזוהה!</h4>
+          <p id="specialAlertText" class="text-xs text-amber-800 mt-0.5 font-heebo"></p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Column 1 & 2: Subject-Specific Items Needed Today -->
+        <div class="lg:col-span-2 space-y-4">
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 flex-wrap gap-2">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">📚</span>
+                <h3 class="font-bold text-slate-800 text-lg">ספרים, חוברות ומחברות להיום</h3>
+              </div>
+              <div class="flex items-center gap-2 text-xs">
+                <button onclick="toggleAllItems(true)" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg font-medium border border-emerald-200 transition">
+                  סמן הכל כנארז ✓
+                </button>
+                <button onclick="toggleAllItems(false)" class="px-2.5 py-1 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-lg font-medium transition">
+                  אפס סימונים ↺
+                </button>
+              </div>
+            </div>
+
+            <!-- List Container -->
+            <div id="subjectGearList" class="mt-4 space-y-3">
+              <!-- Rendered by JS -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptySubjectsState" class="py-12 text-center text-slate-400 space-y-2">
+              <span class="text-4xl block">🎒</span>
+              <p class="font-bold text-slate-600">עדיין לא נבחרו מקצועות</p>
+              <p class="text-xs text-slate-400">הקלידו מקצועות בשדה הטקסט למעלה או בחרו יום מהמערכת</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 3: Fixed Essentials (Pencil Case & Bag Essentials) -->
+        <div class="space-y-6">
+          
+          <!-- Stationery Checklist (בקלמר) -->
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+            <div class="flex items-center gap-2 pb-3 border-b border-slate-100 mb-3">
+              <span class="text-xl">✏️</span>
+              <h3 class="font-bold text-slate-800 text-base">קבוע בקלמר (בדיקה יומית)</h3>
+            </div>
+            <ul id="pencilCaseList" class="space-y-1 text-sm font-heebo">
+              <!-- Rendered by JS -->
+            </ul>
+          </div>
+
+          <!-- Fixed Bag Items (קבוע בילקוט) -->
+          <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+            <div class="flex items-center gap-2 pb-3 border-b border-slate-100 mb-3">
+              <span class="text-xl">🥪</span>
+              <h3 class="font-bold text-slate-800 text-base">קבוע בילקוט</h3>
+            </div>
+            <ul id="fixedBagList" class="space-y-1 text-sm font-heebo">
+              <!-- Rendered by JS -->
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <section id="view-weekly" class="hidden space-y-6">
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-bold text-slate-800">ניהול מערכת שעות שבועית</h2>
+          <p class="text-xs text-slate-500">הגדירו פעם אחת את השיעורים לכל יום, והמערכת תישמר אוטומטית בדפדפן.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="loadDemoWeeklySchedule()" class="px-3 py-1.5 text-xs bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg font-medium transition">
+            טען מערכת לדוגמה
+          </button>
+          <button onclick="saveWeeklySchedulePrompt()" class="px-4 py-1.5 text-xs bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg font-bold transition shadow-sm">
+            שמור מערכת 💾
+          </button>
+        </div>
+      </div>
+
+      <div id="weeklyCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <section id="view-catalog" class="hidden space-y-6">
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-bold text-slate-800">רשימת הציוד המלאה (25 מקצועות)</h2>
+          <p class="text-xs text-slate-500">הקלדה מדויקת מתוך דף הציוד הרשמי לכיתה א'</p>
+        </div>
+        <div class="w-full md:w-64">
+          <input 
+            type="text" 
+            id="catalogSearchInput" 
+            oninput="filterCatalog()"
+            placeholder="חיפוש מקצוע או ספר..." 
+            class="w-full text-xs md:text-sm border border-slate-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500 font-heebo"
+          >
+        </div>
+      </div>
+
+      <div id="catalogList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2.5 text-xs md:text-sm transition-opacity duration-300 opacity-0 pointer-events-none z-50">
+    <span id="toastIcon">✨</span>
+    <span id="toastMsg">הודעה</span>
+  </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      // Load saved weekly schedule from localStorage if available
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY_WEEKLY);
+        if (saved) {
+          weeklySchedule = JSON.parse(saved);
+        }
+      } catch (e) {
+        console.warn("Could not load from localStorage:", e);
+      }
+
+      // Initialize UI components safely
+      renderStaticChecklists();
+      renderQuickChips();
+      renderWeeklyGrid();
+      renderCatalog(SUBJECTS_DB);
+
+      // Auto load Sunday by default
+      loadDaySchedule('א');
+    });
+
+    /* Switch between tabs */
+    function switchView(viewName) {
+      document.getElementById('view-daily').classList.toggle('hidden', viewName !== 'daily');
+      document.getElementById('view-weekly').classList.toggle('hidden', viewName !== 'weekly');
+      document.getElementById('view-catalog').classList.toggle('hidden', viewName !== 'catalog');
+
+      // Update tab styles
+      const tabs = {
+        daily: document.getElementById('tab-daily'),
+        weekly: document.getElementById('tab-weekly'),
+        catalog: document.getElementById('tab-catalog')
+      };
+
+      for (const [key, btn] of Object.entries(tabs)) {
+        if (key === viewName) {
+          btn.className = "px-4 py-2 rounded-lg transition-all shadow-sm bg-white text-indigo-700 font-bold";
+        } else {
+          btn.className = "px-4 py-2 rounded-lg transition-all text-indigo-100 hover:text-white";
+        }
+      }
+    }
+
+    /* Render constant lists (Pencil case and Schoolbag) */
+    function renderStaticChecklists() {
+      const pencilUl = document.getElementById('pencilCaseList');
+      if (pencilUl) {
+        pencilUl.innerHTML = PENCIL_CASE_ITEMS.map((item, idx) => `
+          <li class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition border border-transparent hover:border-slate-100">
+            <input 
+              type="checkbox" 
+              id="pencil_${idx}" 
+              class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer accent-emerald-600"
+            >
+            <label for="pencil_${idx}" class="text-slate-700 select-none cursor-pointer flex-1 flex items-center gap-2 text-xs md:text-sm">
+              <span>${item.icon}</span>
+              <span>${item.text}</span>
+            </label>
+          </li>
+        `).join('');
+      }
+
+      const bagUl = document.getElementById('fixedBagList');
+      if (bagUl) {
+        bagUl.innerHTML = FIXED_BAG_ITEMS.map((item, idx) => `
+          <li class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 transition border border-transparent hover:border-slate-100">
+            <input 
+              type="checkbox" 
+              id="bag_${idx}" 
+              class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer accent-blue-600"
+            >
+            <label for="bag_${idx}" class="text-slate-700 select-none cursor-pointer flex-1 flex items-center gap-2 text-xs md:text-sm">
+              <span>${item.icon}</span>
+              <span>${item.text}</span>
+            </label>
+          </li>
+        `).join('');
+      }
+    }
+
+    /* Render quick subject chips for 1-click toggling */
+    function renderQuickChips() {
+      const container = document.getElementById('quickChipsContainer');
+      if (!container) return;
+      container.innerHTML = SUBJECTS_DB.map(s => `
+        <button 
+          id="chip_${s.id}" 
+          onclick="toggleSubjectChip(${s.id})"
+          class="px-2.5 py-1 text-xs rounded-lg border border-slate-200 bg-white text-slate-700 hover:border-indigo-300 transition-all flex items-center gap-1.5"
+        >
+          <span>${s.name}</span>
+          <span class="w-2 h-2 rounded-full ${getColorDotClass(s.coverColor)}"></span>
+        </button>
+      `).join('');
+    }
+
+    function getColorDotClass(color) {
+      switch(color) {
+        case 'yellow': return 'bg-yellow-400 border border-yellow-500';
+        case 'green': return 'bg-emerald-500 border border-emerald-600';
+        case 'red': return 'bg-red-500 border border-red-600';
+        case 'clear': return 'bg-slate-300 border border-slate-400';
+        default: return 'bg-slate-200 border border-slate-300';
+      }
+    }
+
+    function getColorBadge(color, text) {
+      let badgeClass = 'badge-none';
+      if (color === 'yellow') badgeClass = 'badge-yellow';
+      if (color === 'green') badgeClass = 'badge-green';
+      if (color === 'red') badgeClass = 'badge-red';
+      if (color === 'clear') badgeClass = 'badge-clear';
+      return `<span class="inline-block text-[11px] font-bold px-2 py-0.5 rounded-full ${badgeClass}">${text}</span>`;
+    }
+
+    function handleScheduleInput() {
+      const text = document.getElementById('scheduleInput').value;
+      parseScheduleText(text);
+    }
+
+    function parseScheduleText(text) {
+      activeSubjectIds.clear();
+      if (!text || !text.trim()) {
+        updateActiveUI();
+        return;
+      }
+
+      // Flatten keyword list sorted by length descending (Longest Match First)
+      const keywordRules = [];
+      SUBJECTS_DB.forEach(subj => {
+        subj.keywords.forEach(kw => {
+          keywordRules.push({
+            keyword: kw.trim(),
+            subjectId: subj.id,
+            length: kw.trim().length
+          });
+        });
+      });
+
+      // Sort descending by keyword length
+      keywordRules.sort((a, b) => b.length - a.length);
+
+      // Working buffer for text inspection and consumption
+      let workingText = text.toLowerCase();
+
+      // Match each keyword with Hebrew boundary lookarounds
+      keywordRules.forEach(rule => {
+        const escapedKw = escapeRegExp(rule.keyword.toLowerCase());
+        // Lookbehind (?<![א-ת]) ensures no Hebrew letter immediately before
+        // Lookahead (?![א-ת]) ensures no Hebrew letter immediately after
+        const pattern = new RegExp(`(?<![א-ת])${escapedKw}(?![א-ת])`, 'g');
+
+        if (pattern.test(workingText)) {
+          activeSubjectIds.add(rule.subjectId);
+          // Consume the matched keyword by replacing it with spaces of identical length
+          workingText = workingText.replace(pattern, match => ' '.repeat(match.length));
+        }
+      });
+
+      updateActiveUI();
+    }
+
+    function escapeRegExp(string) {
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function toggleSubjectChip(subjId) {
+      if (activeSubjectIds.has(subjId)) {
+        activeSubjectIds.delete(subjId);
+      } else {
+        activeSubjectIds.add(subjId);
+      }
+      
+      const names = Array.from(activeSubjectIds).map(id => {
+        const s = SUBJECTS_DB.find(x => x.id === id);
+        return s ? s.name : '';
+      }).filter(Boolean);
+      
+      document.getElementById('scheduleInput').value = names.join(', ');
+      updateActiveUI();
+    }
+
+    function clearInput() {
+      document.getElementById('scheduleInput').value = '';
+      activeSubjectIds.clear();
+      updateActiveUI();
+      showToast("נוקה בהצלחה 🧹");
+    }
+
+    /* Load predefined day from the weekly schedule */
+    function loadDaySchedule(dayKey) {
+      const dayText = weeklySchedule[dayKey] || "";
+      document.getElementById('scheduleInput').value = dayText;
+      parseScheduleText(dayText);
+
+      // Highlight day button
+      document.querySelectorAll('.day-chip').forEach(btn => {
+        if (btn.textContent.trim().startsWith(`יום ${dayKey}`)) {
+          btn.className = "day-chip px-3 py-1.5 text-xs rounded-lg border border-indigo-600 bg-indigo-600 text-white font-bold transition shadow-sm";
+        } else {
+          btn.className = "day-chip px-3 py-1.5 text-xs rounded-lg border border-slate-200 bg-white hover:bg-indigo-50 text-slate-700 font-medium transition";
+        }
+      });
+
+      showToast(`נטענה מערכת יום ${dayKey}' 📅`);
+    }
+
+    function updateActiveUI() {
+      // 1. Update count
+      const countEl = document.getElementById('recognizedCount');
+      if (countEl) {
+        countEl.textContent = `${activeSubjectIds.size} מקצועות זוהו`;
+      }
+
+      // 2. Update chips styling
+      SUBJECTS_DB.forEach(s => {
+        const chip = document.getElementById(`chip_${s.id}`);
+        if (chip) {
+          if (activeSubjectIds.has(s.id)) {
+            chip.className = "px-2.5 py-1 text-xs rounded-lg border border-indigo-600 bg-indigo-50 text-indigo-900 font-bold transition-all shadow-sm flex items-center gap-1.5";
+          } else {
+            chip.className = "px-2.5 py-1 text-xs rounded-lg border border-slate-200 bg-white text-slate-700 hover:border-indigo-300 transition-all flex items-center gap-1.5";
+          }
+        }
+      });
+
+      // 3. Render Subject Gear List
+      const gearContainer = document.getElementById('subjectGearList');
+      const emptyState = document.getElementById('emptySubjectsState');
+      const specialAlert = document.getElementById('specialAlertNotice');
+      const specialAlertText = document.getElementById('specialAlertText');
+
+      if (!gearContainer || !emptyState) return;
+
+      if (activeSubjectIds.size === 0) {
+        gearContainer.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        if (specialAlert) specialAlert.classList.add('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+
+      let hasSport = false;
+      let sportNote = [];
+
+      let html = '';
+      activeSubjectIds.forEach(id => {
+        const subj = SUBJECTS_DB.find(s => s.id === id);
+        if (!subj) return;
+
+        if (subj.isSport) {
+          hasSport = true;
+          sportNote.push(`${subj.name}: ${subj.specialNotes}`);
+        }
+
+        const isNoSupplies = subj.notebook.includes("ללא ציוד") && subj.workbooks.length === 0;
+
+        html += `
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50/70 hover:bg-white hover:border-slate-300 transition shadow-sm">
+            <div class="flex items-center justify-between flex-wrap gap-2 mb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full ${getColorDotClass(subj.coverColor)}"></span>
+                <h4 class="font-bold text-slate-800 text-base">${subj.id}. ${subj.name}</h4>
+              </div>
+              <div class="flex items-center gap-2">
+                ${getColorBadge(subj.coverColor, subj.coverName)}
+              </div>
+            </div>
+
+            <div class="space-y-2 mt-2">
+              ${isNoSupplies ? `
+                <div class="text-xs text-slate-500 italic flex items-center gap-1.5 bg-slate-100/70 p-2 rounded-lg">
+                  <span>ℹ️</span>
+                  <span>ללא ציוד מיוחד בשלב זה</span>
+                </div>
+              ` : `
+                <!-- Notebook Item -->
+                ${subj.notebook && !subj.notebook.includes("ללא") ? `
+                  <div class="flex items-start gap-2.5 bg-white p-2.5 rounded-lg border border-slate-200">
+                    <input 
+                      type="checkbox" 
+                      id="item_notebook_${subj.id}" 
+                      onchange="togglePackedItem('notebook_${subj.id}')"
+                      class="mt-0.5 w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer accent-indigo-600"
+                      ${packedItemsState['notebook_' + subj.id] ? 'checked' : ''}
+                    >
+                    <label for="item_notebook_${subj.id}" class="text-xs md:text-sm text-slate-800 cursor-pointer select-none leading-tight flex-1">
+                      <strong class="text-slate-900">מחברת/קלסר:</strong> ${subj.notebook}
+                    </label>
+                  </div>
+                ` : ''}
+
+                <!-- Workbooks Items -->
+                ${subj.workbooks && subj.workbooks.length > 0 ? subj.workbooks.map((wb, wbIdx) => `
+                  <div class="flex items-start gap-2.5 bg-white p-2.5 rounded-lg border border-slate-200">
+                    <input 
+                      type="checkbox" 
+                      id="item_wb_${subj.id}_${wbIdx}" 
+                      onchange="togglePackedItem('wb_${subj.id}_${wbIdx}')"
+                      class="mt-0.5 w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500 cursor-pointer accent-indigo-600"
+                      ${packedItemsState['wb_' + subj.id + '_' + wbIdx] ? 'checked' : ''}
+                    >
+                    <label for="item_wb_${subj.id}_${wbIdx}" class="text-xs md:text-sm text-slate-800 cursor-pointer select-none leading-tight flex-1">
+                      <strong class="text-indigo-900">חוברת:</strong> ${wb}
+                    </label>
+                  </div>
+                `).join('') : ''}
+              `}
+
+              ${subj.specialNotes ? `
+                <div class="text-xs text-amber-800 bg-amber-50 p-2 rounded-lg border border-amber-200 mt-1.5">
+                  <strong>דגש:</strong> ${subj.specialNotes}
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      });
+
+      gearContainer.innerHTML = html;
+
+      // Sport banner
+      if (specialAlert && specialAlertText) {
+        if (hasSport) {
+          specialAlert.classList.remove('hidden');
+          specialAlertText.textContent = sportNote.join(' | ');
+        } else {
+          specialAlert.classList.add('hidden');
+        }
+      }
+    }
+
+    function togglePackedItem(key) {
+      packedItemsState[key] = !packedItemsState[key];
+    }
+
+    function toggleAllItems(state) {
+      activeSubjectIds.forEach(id => {
+        packedItemsState['notebook_' + id] = state;
+        const subj = SUBJECTS_DB.find(s => s.id === id);
+        if (subj && subj.workbooks) {
+          subj.workbooks.forEach((_, idx) => {
+            packedItemsState['wb_' + id + '_' + idx] = state;
+          });
+        }
+      });
+      updateActiveUI();
+      showToast(state ? "כל הפריטים סומנו כנארזו! כל הכבוד! 🎉" : "איפוס סימונים 🔄");
+    }
+
+    function renderWeeklyGrid() {
+      const container = document.getElementById('weeklyCardsGrid');
+      if (!container) return;
+      const days = [
+        { key: 'א', name: 'יום ראשון' },
+        { key: 'ב', name: 'יום שני' },
+        { key: 'ג', name: 'יום שלישי' },
+        { key: 'ד', name: 'יום רביעי' },
+        { key: 'ה', name: 'יום חמישי' },
+        { key: 'ו', name: 'יום שישי' }
+      ];
+
+      container.innerHTML = days.map(d => `
+        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50 hover:bg-white transition flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-slate-800 text-base">${d.name}</span>
+              <span class="text-xs text-indigo-600 font-semibold bg-indigo-50 px-2 py-0.5 rounded-md">יום ${d.key}'</span>
+            </div>
+            <textarea 
+              id="weekly_input_${d.key}" 
+              rows="3" 
+              class="w-full text-xs md:text-sm border border-slate-200 rounded-lg p-2 focus:ring-1 focus:ring-indigo-500 outline-none bg-white custom-scrollbar font-heebo"
+              placeholder="רשמו מקצועות מופרדים בפסיק..."
+            >${weeklySchedule[d.key] || ''}</textarea>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
+            <button 
+              onclick="applyDayToDailyView('${d.key}')" 
+              class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold flex items-center gap-1"
+            >
+              <span>🎒</span> ארוז יום זה
+            </button>
+            <span class="text-[11px] text-slate-400">נשמר בעת לחיצה</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function saveWeeklySchedulePrompt() {
+      ['א','ב','ג','ד','ה','ו'].forEach(k => {
+        const el = document.getElementById(`weekly_input_${k}`);
+        if (el) {
+          weeklySchedule[k] = el.value;
+        }
+      });
+
+      try {
+        localStorage.setItem(STORAGE_KEY_WEEKLY, JSON.stringify(weeklySchedule));
+        showToast("המערכת השבועית נשמרה בהצלחה! 💾");
+      } catch(e) {
+        showToast("שגיאה בשמירה לזיכרון הדפדפן");
+      }
+    }
+
+    function applyDayToDailyView(dayKey) {
+      saveWeeklySchedulePrompt();
+      switchView('daily');
+      loadDaySchedule(dayKey);
+    }
+
+    function loadDemoWeeklySchedule() {
+      weeklySchedule = {
+        'א': "שפה, חשבון, חינוך גופני, מדעים",
+        'ב': "שפה, הנדסה, אנגלית, מפתח הלב",
+        'ג': "חשבון, שפה, מוזיקה, קסם התיאטרון",
+        'ד': "שפה, חשבון, חינוך גופני, אוריינות דיגיטלית",
+        'ה': "מדעים, שפה, אוריגמטריה, בריאות גוף האדם",
+        'ו': "שפה, חשבון, מפתח הלב"
+      };
+      renderWeeklyGrid();
+      saveWeeklySchedulePrompt();
+      showToast("נטענה מערכת שעות לדוגמה 📋");
+    }
+
+    /* Catalog rendering */
+    function renderCatalog(list) {
+      const container = document.getElementById('catalogList');
+      if (!container) return;
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-8 text-slate-400">
+            לא נמצאו מקצועות התואמים את החיפוש.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map(item => `
+        <div class="border border-slate-200 rounded-xl p-4 bg-white hover:border-indigo-300 hover:shadow-sm transition">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span class="font-bold text-slate-900">${item.id}. ${item.name}</span>
+            ${getColorBadge(item.coverColor, item.coverName)}
+          </div>
+          
+          <div class="text-xs text-slate-600 space-y-1 mt-1 font-heebo">
+            <p><span class="font-semibold text-slate-700">מחברת/קלסר:</span> ${item.notebook}</p>
+            ${item.workbooks.length > 0 ? `
+              <p><span class="font-semibold text-slate-700">חוברות:</span> ${item.workbooks.join(', ')}</p>
+            ` : ''}
+            ${item.specialNotes ? `
+              <p class="text-amber-700 bg-amber-50 p-1 rounded mt-1 text-[11px]">${item.specialNotes}</p>
+            ` : ''}
+          </div>
+
+          <div class="mt-3 pt-2 border-t border-slate-100 flex justify-end">
+            <button 
+              onclick="addSubjectAndSwitchToDaily(${item.id})" 
+              class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold"
+            >
+              + הוסף לאריזה היום
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterCatalog() {
+      const q = document.getElementById('catalogSearchInput').value.trim().toLowerCase();
+      if (!q) {
+        renderCatalog(SUBJECTS_DB);
+        return;
+      }
+      const filtered = SUBJECTS_DB.filter(s => 
+        s.name.toLowerCase().includes(q) || 
+        s.notebook.toLowerCase().includes(q) ||
+        s.workbooks.some(w => w.toLowerCase().includes(q))
+      );
+      renderCatalog(filtered);
+    }
+
+    function addSubjectAndSwitchToDaily(id) {
+      activeSubjectIds.add(id);
+      const names = Array.from(activeSubjectIds).map(i => {
+        const s = SUBJECTS_DB.find(x => x.id === i);
+        return s ? s.name : '';
+      }).filter(Boolean);
+      document.getElementById('scheduleInput').value = names.join(', ');
+      switchView('daily');
+      updateActiveUI();
+      showToast("המקצוע נוסף לרשימת האריזה! 🎒");
+    }
+
+    /* Toast Notification Helper */
+    let toastTimeout;
+    function showToast(msg, icon = "✨") {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+      if (!toast) return;
+      
+      toastMsg.textContent = msg;
+      toastIcon.textContent = icon;
+      
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      toast.classList.add('opacity-100');
+
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 2500);
+    }
+  </script>
+</body>
+</html>
