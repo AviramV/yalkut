@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<title>מארגן הילקוט — כיתה א'</title>
+<meta name="description" content="רשימת אריזה יומית לילקוט של כיתה א', לפי מערכת השעות ורשימת הציוד של בית הספר.">
+<meta name="theme-color" content="#2D4A7C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<header class="topbar">
+  <span class="topbar-mark" aria-hidden="true">🎒</span>
+  <div>
+    <div class="topbar-title" id="appTitle">מארגן הילקוט</div>
+    <div class="topbar-sub" id="appSub"></div>
+  </div>
+  <span class="topbar-spacer"></span>
+  <span class="topbar-ver" id="appVer" title="גרסה"></span>
+</header>
+
+<div class="wrap">
+
+  <div class="tabs" role="tablist" aria-label="תצוגות">
+    <button class="tab" role="tab" id="tab-today"   aria-selected="true"  aria-controls="view-today">אריזה להיום</button>
+    <button class="tab" role="tab" id="tab-week"    aria-selected="false" aria-controls="view-week">מערכת שעות</button>
+    <button class="tab" role="tab" id="tab-catalog" aria-selected="false" aria-controls="view-catalog">כל הציוד</button>
+  </div>
+
+  <!-- ============ today ============ -->
+  <section id="view-today" role="tabpanel" aria-labelledby="tab-today">
+
+    <div class="ready" id="readyBanner" hidden>
+      <span class="ready-mark" aria-hidden="true">🎒</span>
+      <span>הילקוט מוכן. אפשר לצאת!</span>
+    </div>
+
+    <div class="card hero">
+      <h1 class="hero-day" id="dayTitle">&nbsp;</h1>
+      <div class="hero-meta" id="dayMeta"></div>
+
+      <div class="strip" id="strip" aria-hidden="true"></div>
+      <div class="hero-count" id="countText" role="status" aria-live="polite"></div>
+
+      <div class="days" id="dayButtons" role="group" aria-label="בחירת יום"></div>
+
+      <div class="subjects-line" id="subjectsLine"></div>
+
+      <details class="editor" id="editor">
+        <summary>שינוי המקצועות של היום</summary>
+        <p class="hint">הדביקו הודעה מהוואטסאפ, או הקישו על מקצוע כדי להוסיף ולהסיר.</p>
+        <textarea class="paste" id="pasteInput" rows="3"
+          placeholder="למשל: שיעור ראשון שפה, חשבון, חינוך גופני, מדעים"></textarea>
+        <div class="chips" id="subjectChips"></div>
+        <div class="btn-row" style="margin-top:10px">
+          <button class="btn" id="btnClearSubjects">נקה מקצועות</button>
+        </div>
+      </details>
+    </div>
+
+    <div class="cols">
+      <div>
+        <div class="card">
+          <div class="sec-title">
+            <span aria-hidden="true">📚</span>
+            <span class="grow">מה נכנס לילקוט</span>
+            <button class="btn" id="btnUncheck">נקה סימונים</button>
+          </div>
+          <div id="itemList"></div>
+          <div class="empty" id="emptyState">
+            <span class="empty-mark" aria-hidden="true">🎒</span>
+            <div class="empty-title">אין מקצועות ליום הזה</div>
+            <div class="empty-body">בחרו יום למעלה, או הוסיפו מקצועות בעצמכם.</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="sec-title"><span aria-hidden="true">✏️</span><span class="grow">קבוע בקלמר</span></div>
+          <p class="hint">לבדוק כל יום.</p>
+          <ul class="list" id="pencilList"></ul>
+        </div>
+        <div class="card">
+          <div class="sec-title"><span aria-hidden="true">🥪</span><span class="grow">קבוע בילקוט</span></div>
+          <ul class="list" id="bagList"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ weekly ============ -->
+  <section id="view-week" role="tabpanel" aria-labelledby="tab-week" hidden>
+    <div class="card">
+      <div class="sec-title"><span aria-hidden="true">🗓️</span><span class="grow">מערכת השעות השבועית</span></div>
+      <p class="hint">מגדירים פעם אחת. נשמר במכשיר הזה, ומשמש כברירת מחדל לכל יום.</p>
+      <div class="week" id="weekGrid" style="margin-top:14px"></div>
+      <div class="btn-row" style="margin-top:14px">
+        <button class="btn btn-primary" id="btnSaveWeek">שמור מערכת</button>
+        <button class="btn" id="btnResetWeek">חזרה למערכת לדוגמה</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ catalog ============ -->
+  <section id="view-catalog" role="tabpanel" aria-labelledby="tab-catalog" hidden>
+    <div class="card">
+      <div class="sec-title"><span aria-hidden="true">📋</span><span class="grow">רשימת הציוד המלאה</span></div>
+      <p class="hint" id="catalogSub"></p>
+      <div style="margin-top:12px">
+        <label for="catalogSearch" class="sr-only">חיפוש מקצוע או ציוד</label>
+        <input class="search" type="search" id="catalogSearch" placeholder="חיפוש מקצוע או ציוד">
+      </div>
+    </div>
+    <div class="catalog" id="catalogGrid" style="margin-top:16px"></div>
+  </section>
+
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span id="toastMsg"></span>
+</div>
+
+<script src="app.js" defer></script>
+</body>
+</html>
