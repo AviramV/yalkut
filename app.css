@@ -84,7 +84,11 @@ body {
 .card + .card { margin-top: 16px; }
 
 /* ---------- hero: day + progress ---------- */
-.hero { padding-bottom: 14px; }
+.hero {
+  padding-bottom: 14px;
+  margin-bottom: 16px; 
+}
+
 .hero-day {
   font-size: 30px;
   font-weight: 800;
