@@ -13,74 +13,330 @@
   ],
 
   "covers": {
-    "yellow":    { "label": "עטיפה צהובה", "dot": "#FACC15" },
-    "green":     { "label": "עטיפה ירוקה", "dot": "#22C55E" },
-    "red":       { "label": "עטיפה אדומה", "dot": "#EF4444" },
-    "clear":     { "label": "עטיפה שקופה", "dot": "#CBD5E1" },
-    "halfClear": { "label": "חצי שקוף",   "dot": "#94A3B8" }
+    "yellow": { "label": "עטיפה צהובה", "dot": "#FACC15" },
+    "green": { "label": "עטיפה ירוקה", "dot": "#22C55E" },
+    "red": { "label": "עטיפה אדומה", "dot": "#EF4444" },
+    "clear": { "label": "עטיפה שקופה", "dot": "#CBD5E1" },
+    "halfClear": { "label": "חצי שקוף", "dot": "#94A3B8" }
   },
 
   "groups": [
-    { "id": "wear",     "label": "ללבוש / להביא על הגוף", "icon": "👟" },
-    { "id": "binders",  "label": "מחברות וקלסרים",         "icon": "📓" },
-    { "id": "workbooks","label": "חוברות",                 "icon": "📗" },
-    { "id": "supplies", "label": "ציוד יצירה",             "icon": "🎨" }
+    { "id": "wear", "label": "ללבוש / להביא על הגוף", "icon": "👟" },
+    { "id": "binders", "label": "מחברות וקלסרים", "icon": "📓" },
+    { "id": "workbooks", "label": "חוברות", "icon": "📗" },
+    { "id": "supplies", "label": "ציוד יצירה", "icon": "🎨" }
   ],
 
   "items": [
-    { "id": "nb-math",        "group": "binders",   "name": "מחברת חכמה משבצות לכיתה א'", "cover": "yellow",    "shared": false },
-    { "id": "nb-science",     "group": "binders",   "name": "מחברת 10 שורות",             "cover": "green",     "shared": false },
-    { "id": "nb-squares",     "group": "binders",   "name": "מחברת משבצות",               "cover": "clear",     "shared": false },
-    { "id": "nb-lang-smart",  "group": "binders",   "name": "מחברת חכמה שורות",           "cover": "red",       "shared": false },
-    { "id": "nb-lang-sounds", "group": "binders",   "name": "מחברת חלקה לצלילים",         "cover": "red",       "shared": false },
-    { "id": "nb-10lines",     "group": "binders",   "name": "מחברת 10 שורות",             "cover": "clear",     "shared": false },
-    { "id": "nb-smooth",      "group": "binders",   "name": "מחברת חלקה",                 "cover": "clear",     "shared": false },
-    { "id": "nb-squared",     "group": "binders",   "name": "מחברת משובצת",               "cover": null,        "shared": false },
-    { "id": "binder-2sh",     "group": "binders",   "name": "קלסר חצי שקוף עם 2 שמרדפים", "cover": "halfClear", "shared": false },
+    {
+      "id": "nb-math",
+      "group": "binders",
+      "name": "מחברת חכמה משבצות לכיתה א'",
+      "cover": "yellow",
+      "shared": false
+    },
+    {
+      "id": "nb-science",
+      "group": "binders",
+      "name": "מחברת 10 שורות",
+      "cover": "green",
+      "shared": false
+    },
+    {
+      "id": "nb-squares",
+      "group": "binders",
+      "name": "מחברת משבצות",
+      "cover": "clear",
+      "shared": false
+    },
+    {
+      "id": "nb-lang-smart",
+      "group": "binders",
+      "name": "מחברת חכמה שורות",
+      "cover": "red",
+      "shared": false
+    },
+    {
+      "id": "nb-lang-sounds",
+      "group": "binders",
+      "name": "מחברת חלקה לצלילים",
+      "cover": "red",
+      "shared": false
+    },
+    {
+      "id": "nb-10lines",
+      "group": "binders",
+      "name": "מחברת 10 שורות",
+      "cover": "clear",
+      "shared": false
+    },
+    {
+      "id": "nb-smooth",
+      "group": "binders",
+      "name": "מחברת חלקה",
+      "cover": "clear",
+      "shared": false
+    },
+    {
+      "id": "nb-squared",
+      "group": "binders",
+      "name": "מחברת משובצת",
+      "cover": null,
+      "shared": false
+    },
+    {
+      "id": "binder-2sh",
+      "group": "binders",
+      "name": "קלסר חצי שקוף עם 2 שמרדפים",
+      "cover": "halfClear",
+      "shared": false
+    },
 
-    { "id": "wb-shvilim1",    "group": "workbooks", "name": "חוברת שבילים חדשים 1", "cover": null, "shared": true },
-    { "id": "wb-avizarim",    "group": "workbooks", "name": "חוברת אביזרים",        "cover": null, "shared": true },
-    { "id": "wb-teva1",       "group": "workbooks", "name": "חוברת פלא טבע 1",      "cover": null, "shared": true },
-    { "id": "wb-teva5",       "group": "workbooks", "name": "חוברת פלא טבע 5",      "cover": null, "shared": true },
-    { "id": "wb-kamatz",      "group": "workbooks", "name": "חוברת קמץ פתח",        "cover": null, "shared": true },
+    {
+      "id": "wb-shvilim1",
+      "group": "workbooks",
+      "name": "חוברת שבילים חדשים 1",
+      "cover": null,
+      "shared": true
+    },
+    {
+      "id": "wb-avizarim",
+      "group": "workbooks",
+      "name": "חוברת אביזרים",
+      "cover": null,
+      "shared": true
+    },
+    {
+      "id": "wb-teva1",
+      "group": "workbooks",
+      "name": "חוברת פלא טבע 1",
+      "cover": null,
+      "shared": true
+    },
+    {
+      "id": "wb-teva5",
+      "group": "workbooks",
+      "name": "חוברת פלא טבע 5",
+      "cover": null,
+      "shared": true
+    },
+    {
+      "id": "wb-kamatz",
+      "group": "workbooks",
+      "name": "חוברת קמץ פתח",
+      "cover": null,
+      "shared": true
+    },
 
-    { "id": "sport-pants",    "group": "wear", "name": "מכנס נוח לספורט",   "cover": null, "shared": true },
-    { "id": "sport-shoes",    "group": "wear", "name": "נעלי ספורט",        "cover": null, "shared": true },
-    { "id": "sport-hat",      "group": "wear", "name": "כובע (בימים חמים)", "cover": null, "shared": true },
-    { "id": "dance-clothes",  "group": "wear", "name": "ביגוד נוח לריקוד",  "cover": null, "shared": true },
+    {
+      "id": "sport-pants",
+      "group": "wear",
+      "name": "מכנס נוח לספורט",
+      "cover": null,
+      "shared": true
+    },
+    {
+      "id": "sport-shoes",
+      "group": "wear",
+      "name": "נעלי ספורט",
+      "cover": null,
+      "shared": true
+    },
+    {
+      "id": "sport-hat",
+      "group": "wear",
+      "name": "כובע (בימים חמים)",
+      "cover": null,
+      "shared": true
+    },
+    {
+      "id": "dance-clothes",
+      "group": "wear",
+      "name": "ביגוד נוח לריקוד",
+      "cover": null,
+      "shared": true
+    },
 
-    { "id": "art-pad",      "group": "supplies", "name": "בלוק ציור",            "cover": null, "shared": true },
-    { "id": "art-markers",  "group": "supplies", "name": "צבעי פנדה או טושים",   "cover": null, "shared": true },
-    { "id": "art-gouache",  "group": "supplies", "name": "צבעי גואש ומכחול",     "cover": null, "shared": true },
-    { "id": "art-pencils",  "group": "supplies", "name": "צבעי עיפרון",          "cover": null, "shared": true }
+    {
+      "id": "art-pad",
+      "group": "supplies",
+      "name": "בלוק ציור",
+      "cover": null,
+      "shared": true
+    },
+    {
+      "id": "art-markers",
+      "group": "supplies",
+      "name": "צבעי פנדה או טושים",
+      "cover": null,
+      "shared": true
+    },
+    {
+      "id": "art-gouache",
+      "group": "supplies",
+      "name": "צבעי גואש ומכחול",
+      "cover": null,
+      "shared": true
+    },
+    {
+      "id": "art-pencils",
+      "group": "supplies",
+      "name": "צבעי עיפרון",
+      "cover": null,
+      "shared": true
+    }
   ],
 
   "subjects": [
-    { "id": 1,  "name": "חשבון",       "keywords": ["חשבון", "מתמטיקה", "שבילים"],                    "items": ["nb-math", "wb-shvilim1", "wb-avizarim"] },
-    { "id": 2,  "name": "מדעים",       "keywords": ["מדעים", "פלא טבע 1"],                            "items": ["nb-science", "wb-teva1"] },
-    { "id": 3,  "name": "לוגיקה",      "keywords": ["לוגיקה"],                                        "items": ["nb-squares"] },
-    { "id": 4,  "name": "אנגלית",      "keywords": ["אנגלית", "english"],                             "items": ["binder-2sh"] },
-    { "id": 5,  "name": "שפה",         "keywords": ["שפה", "עברית", "קמץ פתח"],                       "items": ["nb-lang-smart", "nb-lang-sounds", "wb-kamatz"], "note": "2 מחברות בצבע אדום: חכמה שורות + חלקה לצלילים" },
-    { "id": 6,  "name": "אומנות",      "keywords": ["אומנות", "אמנות", "ציור"],                       "items": ["art-pad", "art-markers", "art-gouache", "art-pencils"], "note": "עפרון, מחק וסרגל כבר בקלמר הקבוע" },
-    { "id": 7,  "name": "חינוך גופני", "keywords": ["חינוך גופני", "ספורט", "חנ\"ג", "חנג"],          "items": ["sport-pants", "sport-shoes", "sport-hat"], "note": "הקפדה על בקבוק מים וכובע בימים חמים" },
-    { "id": 8,  "name": "קסם התיאטרון","keywords": ["קסם התיאטרון", "תיאטרון", "תאטרון"],             "items": ["binder-2sh"] },
-    { "id": 9,  "name": "אנגלית אומנותית", "keywords": ["אנגלית אומנותית", "אנגלית אמנותית"],         "items": [] },
-    { "id": 10, "name": "אקולוגיה",    "keywords": ["אקולוגיה"],                                      "items": [] },
-    { "id": 11, "name": "אוריגמטריה",  "keywords": ["אוריגמטריה", "אוריגמי"],                         "items": ["binder-2sh"] },
-    { "id": 12, "name": "ריקוד",       "keywords": ["ריקוד", "מחול"],                                 "items": ["dance-clothes", "sport-shoes"] },
-    { "id": 13, "name": "חוקרים צעירים", "keywords": ["חוקרים צעירים"],                               "items": [] },
-    { "id": 14, "name": "רופאים צעירים", "keywords": ["רופאים צעירים"],                               "items": [] },
-    { "id": 15, "name": "משחקים מן העתיד", "keywords": ["משחקים מן העתיד", "משחקי העתיד"],            "items": [] },
-    { "id": 16, "name": "מפתח הלב וכישורי חיים", "keywords": ["מפתח הלב וכישורי חיים", "מפתח הלב", "כישורי חיים"], "items": ["nb-10lines"], "note": "מחברת אחת משותפת לשני המקצועות" },
-    { "id": 17, "name": "זה\"ב",       "keywords": ["זה\"ב", "זהב", "בטיחות בדרכים"],                 "items": ["nb-10lines"] },
-    { "id": 18, "name": "מוזיקה",      "keywords": ["מוזיקה", "מוסיקה", "נגינה"],                     "items": ["nb-smooth"] },
-    { "id": 19, "name": "כימיה",       "keywords": ["כימיה"],                                         "items": ["nb-squares"] },
-    { "id": 20, "name": "פיזיקה",      "keywords": ["פיזיקה", "פיסיקה"],                              "items": ["nb-10lines"] },
-    { "id": 21, "name": "בריאות גוף האדם", "keywords": ["בריאות גוף האדם", "בריאות הגוף", "גוף האדם"], "items": ["binder-2sh", "wb-teva5"] },
-    { "id": 22, "name": "אתגרי הלוגיקה", "keywords": ["אתגרי הלוגיקה", "אתגרי לוגיקה"],               "items": ["binder-2sh"] },
-    { "id": 23, "name": "אשכולות חשיבה", "keywords": ["אשכולות חשיבה", "אשכולות"],                    "items": [] },
-    { "id": 24, "name": "אוריינות דיגיטלית", "keywords": ["אוריינות דיגיטלית", "מחשבים", "אוריינות"], "items": ["nb-10lines"] },
-    { "id": 25, "name": "הנדסה",       "keywords": ["הנדסה", "גיאומטריה", "שבילים הנדסה"],            "items": ["nb-squared", "wb-shvilim1"] }
+    {
+      "id": 1,
+      "name": "חשבון",
+      "keywords": ["חשבון", "מתמטיקה", "שבילים"],
+      "items": ["nb-math", "wb-shvilim1", "wb-avizarim"]
+    },
+    {
+      "id": 2,
+      "name": "מדעים",
+      "keywords": ["מדעים", "פלא טבע 1"],
+      "items": ["nb-science", "wb-teva1"]
+    },
+    {
+      "id": 3,
+      "name": "לוגיקה",
+      "keywords": ["לוגיקה"],
+      "items": ["nb-squares"]
+    },
+    {
+      "id": 4,
+      "name": "אנגלית",
+      "keywords": ["אנגלית", "english"],
+      "items": ["binder-2sh"]
+    },
+    {
+      "id": 5,
+      "name": "שפה",
+      "keywords": ["שפה", "עברית", "קמץ פתח"],
+      "items": ["nb-lang-smart", "nb-lang-sounds", "wb-kamatz"],
+      "note": "2 מחברות בצבע אדום: חכמה שורות + חלקה לצלילים"
+    },
+    {
+      "id": 6,
+      "name": "אומנות",
+      "keywords": ["אומנות", "אמנות", "ציור"],
+      "items": ["art-pad", "art-markers", "art-gouache", "art-pencils"],
+      "note": "עפרון, מחק וסרגל כבר בקלמר הקבוע"
+    },
+    {
+      "id": 7,
+      "name": "חינוך גופני",
+      "keywords": ["חינוך גופני", "ספורט", "חנ\"ג", "חנג"],
+      "items": ["sport-pants", "sport-shoes", "sport-hat"],
+      "note": "הקפדה על בקבוק מים וכובע בימים חמים"
+    },
+    {
+      "id": 8,
+      "name": "קסם התיאטרון",
+      "keywords": ["קסם התיאטרון", "תיאטרון", "תאטרון"],
+      "items": ["binder-2sh"]
+    },
+    {
+      "id": 9,
+      "name": "אנגלית אומנותית",
+      "keywords": ["אנגלית אומנותית", "אנגלית אמנותית"],
+      "items": []
+    },
+    { "id": 10, "name": "אקולוגיה", "keywords": ["אקולוגיה"], "items": [] },
+    {
+      "id": 11,
+      "name": "אוריגמטריה",
+      "keywords": ["אוריגמטריה", "אוריגמי"],
+      "items": ["binder-2sh"]
+    },
+    {
+      "id": 12,
+      "name": "ריקוד",
+      "keywords": ["ריקוד", "מחול"],
+      "items": ["dance-clothes", "sport-shoes"]
+    },
+    {
+      "id": 13,
+      "name": "חוקרים צעירים",
+      "keywords": ["חוקרים צעירים"],
+      "items": []
+    },
+    {
+      "id": 14,
+      "name": "רופאים צעירים",
+      "keywords": ["רופאים צעירים"],
+      "items": []
+    },
+    {
+      "id": 15,
+      "name": "משחקים מן העתיד",
+      "keywords": ["משחקים מן העתיד", "משחקי העתיד"],
+      "items": []
+    },
+    {
+      "id": 16,
+      "name": "מפתח הלב וכישורי חיים",
+      "keywords": ["מפתח הלב וכישורי חיים", "מפתח הלב", "כישורי חיים"],
+      "items": ["nb-10lines"],
+      "note": "מחברת אחת משותפת לשני המקצועות"
+    },
+    {
+      "id": 17,
+      "name": "זה\"ב",
+      "keywords": ["זה\"ב", "זהב", "בטיחות בדרכים"],
+      "items": ["nb-10lines"]
+    },
+    {
+      "id": 18,
+      "name": "מוזיקה",
+      "keywords": ["מוזיקה", "מוסיקה", "נגינה"],
+      "items": ["nb-smooth"]
+    },
+    {
+      "id": 19,
+      "name": "כימיה",
+      "keywords": ["כימיה"],
+      "items": ["nb-squares"]
+    },
+    {
+      "id": 20,
+      "name": "פיזיקה",
+      "keywords": ["פיזיקה", "פיסיקה"],
+      "items": ["nb-10lines"]
+    },
+    {
+      "id": 21,
+      "name": "בריאות גוף האדם",
+      "keywords": ["בריאות גוף האדם", "בריאות הגוף", "גוף האדם"],
+      "items": ["binder-2sh", "wb-teva5"]
+    },
+    {
+      "id": 22,
+      "name": "אתגרי הלוגיקה",
+      "keywords": ["אתגרי הלוגיקה", "אתגרי לוגיקה"],
+      "items": ["binder-2sh"]
+    },
+    {
+      "id": 23,
+      "name": "אשכולות חשיבה",
+      "keywords": ["אשכולות חשיבה", "אשכולות"],
+      "items": []
+    },
+    {
+      "id": 24,
+      "name": "אוריינות דיגיטלית",
+      "keywords": ["אוריינות דיגיטלית", "מחשבים", "אוריינות"],
+      "items": ["nb-10lines"]
+    },
+    {
+      "id": 25,
+      "name": "הנדסה",
+      "keywords": ["הנדסה", "גיאומטריה", "שבילים הנדסה"],
+      "items": ["nb-squared", "wb-shvilim1"]
+    }
   ],
 
   "pencilCase": [
@@ -106,8 +362,8 @@
     "0": "שפה, חשבון, חינוך גופני, מדעים",
     "1": "שפה, הנדסה, אנגלית, מפתח הלב",
     "2": "חשבון, שפה, מוזיקה, קסם התיאטרון",
-    "3": "שפה, חשבון, חינוך גופני, אוריינות דיגיטלית",
-    "4": "מדעים, שפה, אוריגמטריה, בריאות גוף האדם",
-    "5": "שפה, חשבון, מפתח הלב"
+    "3": "כימיה, פיזיקה, בריאות גוף האדם, אשכולות חשיבה, מדעים, חינוך גופני, אומנות",
+    "4": "לוגיקה, חינוך גופני, חשבון, אנגלית אומנותית, אתגרי הלוגיקה, שפה, מחול",
+    "5": "שפה, חשבון, אוריינות דיגיטלית"
   }
 }
