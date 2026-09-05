@@ -246,6 +246,7 @@ function renderHeader(instances) {
   }
 }
 
+let wasReady = null;   // null until the first render, so a resumed full bag stays quiet
 function renderProgress(instances) {
   const total = instances.length + DATA.pencilCase.length + DATA.fixedBag.length;
   const keys = [
@@ -263,6 +264,8 @@ function renderProgress(instances) {
   strip.classList.toggle('full', total > 0 && done === total);
 
   const allPacked = total > 0 && done === total;
+  if (allPacked && wasReady === false) track('bag_ready', { items: total, day: selectedDay });
+  wasReady = allPacked;
   const countEl = $('countText');
   countEl.textContent = allPacked ? 'הכול נארז' : `${done} מתוך ${total} נארזו`;
   countEl.classList.toggle('done', allPacked);
@@ -341,6 +344,30 @@ function renderCatalog(query = '') {
   }).join('');
 }
 
+/* ---------------- analytics ----------------
+   Aptabase. The SDK is vendored in aptabase.js because this app has no build
+   step; it loads lazily, so a blocked or offline request never delays the list.
+   Only counts, day numbers and subject names leave the device — never the
+   pasted WhatsApp message and never a search query. */
+
+let track = () => {};
+
+function startAnalytics() {
+  const ready = import('./aptabase.js')
+    .then((m) => {
+      m.init('A-EU-8415609974', {
+        appVersion: DATA?.version ?? '',
+        // Anything not served from the published site is debug traffic, so a
+        // local test never lands in the real numbers.
+        isDebug: !location.hostname.endsWith('github.io'),
+      });
+      return m;
+    })
+    .catch(() => null);   // blocked, offline or unsupported — the app runs on
+
+  track = (name, props) => { ready.then((m) => m?.trackEvent(name, props)); };
+}
+
 /* ---------------- actions ---------------- */
 
 function selectDay(day, { announce = true } = {}) {
@@ -359,6 +386,10 @@ function setSubjectsFromText() {
 
 function toggleSubject(id) {
   const at = activeIds.indexOf(id);
+  track('chip_toggled', {
+    action: at === -1 ? 'add' : 'remove',
+    subject: subjectById.get(id)?.name ?? String(id),
+  });
   if (at === -1) activeIds.push(id); else activeIds.splice(at, 1);
   // The textarea is an input, not the source of truth. Leaving it alone means
   // a chip tap never destroys the message the parent pasted in.
@@ -366,6 +397,7 @@ function toggleSubject(id) {
 }
 
 function uncheckAll() {
+  track('checks_cleared', { day: selectedDay });
   checked = {};
   renderFixedLists();
   render();
@@ -409,7 +441,10 @@ function wire() {
 
   $('dayButtons').addEventListener('click', (e) => {
     const btn = e.target.closest('.day');
-    if (btn) selectDay(Number(btn.dataset.day));
+    if (!btn) return;
+    const day = Number(btn.dataset.day);
+    track('day_selected', { day, is_today: day === schoolDay() ? 'yes' : 'no' });
+    selectDay(day);
   });
 
   $('subjectChips').addEventListener('click', (e) => {
@@ -418,6 +453,13 @@ function wire() {
   });
 
   $('pasteInput').addEventListener('input', setSubjectsFromText);
+
+  // On blur, not on every keystroke. matched:0 with chars>0 is the signal that
+  // the keyword list missed something a parent actually pasted.
+  $('pasteInput').addEventListener('change', (e) => {
+    const chars = e.target.value.trim().length;
+    if (chars) track('subjects_matched', { chars, matched: activeIds.length });
+  });
 
   $('btnClearSubjects').addEventListener('click', () => {
     $('pasteInput').value = '';
@@ -442,7 +484,7 @@ function wire() {
   $('btnUncheck').addEventListener('click', uncheckAll);
 
   for (const key of ['today', 'week', 'catalog']) {
-    $(`tab-${key}`).addEventListener('click', () => switchTab(key));
+    $(`tab-${key}`).addEventListener('click', () => { track('tab_view', { tab: key }); switchTab(key); });
   }
 
   // Weekly edits save on blur, so switching tabs can't quietly discard them.
@@ -454,11 +496,17 @@ function wire() {
 
   $('btnSaveWeek').addEventListener('click', () => {
     for (const ta of $('weekGrid').querySelectorAll('textarea')) week[ta.dataset.day] = ta.value;
-    toast(saveWeek() ? 'המערכת נשמרה' : 'לא הצלחנו לשמור. בדפדפן פרטי השמירה מושבתת.');
+    const ok = saveWeek();
+    track('week_saved', {
+      ok: ok ? 'yes' : 'no',
+      days_filled: Object.values(week).filter((v) => (v || '').trim()).length,
+    });
+    toast(ok ? 'המערכת נשמרה' : 'לא הצלחנו לשמור. בדפדפן פרטי השמירה מושבתת.');
     if (week[selectedDay] !== undefined) selectDay(selectedDay, { announce: false });
   });
 
   $('btnResetWeek').addEventListener('click', () => {
+    track('week_reset');
     week = { ...DATA.defaultWeekly };
     renderWeek();
     saveWeek();
@@ -467,6 +515,17 @@ function wire() {
   });
 
   $('catalogSearch').addEventListener('input', (e) => renderCatalog(e.target.value));
+
+  // The query itself stays on the device; only whether it found anything travels.
+  $('catalogSearch').addEventListener('change', (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    if (!q) return;
+    const hits = DATA.subjects.filter((s) =>
+      s.name.toLowerCase().includes(q)
+      || s.keywords.some((k) => k.toLowerCase().includes(q))
+      || s.items.some((id) => (itemById.get(id)?.name || '').toLowerCase().includes(q))).length;
+    track('catalog_search', { chars: q.length, hits });
+  });
 }
 
 /* ---------------- updates ----------------
@@ -478,9 +537,10 @@ function registerServiceWorker() {
 
   navigator.serviceWorker.register('sw.js').then((reg) => {
     const offerReload = (worker) => {
+      track('update_offered');
       toast('יש גרסה חדשה', {
         label: 'רענן',
-        onClick: () => worker.postMessage('skip-waiting'),
+        onClick: () => { track('update_applied'); worker.postMessage('skip-waiting'); },
       });
     };
 
@@ -524,8 +584,12 @@ async function boot() {
       + '<div class="empty-title">רשימת הציוד לא נטענה</div>'
       + '<div class="empty-body">בדקו חיבור לאינטרנט ורעננו את הדף.</div></div>';
     console.error(err);
+    startAnalytics();
+    track('data_load_failed', { reason: String(err.message).slice(0, 60) });
     return;
   }
+
+  startAnalytics();
 
   for (const s of DATA.subjects) subjectById.set(s.id, s);
   for (const i of DATA.items) itemById.set(i.id, i);
@@ -556,6 +620,14 @@ async function boot() {
   }
 
   registerServiceWorker();
+
+  track('app_open', {
+    day: selectedDay,
+    subjects: activeIds.length,
+    mode: matchMedia('(display-mode: standalone)').matches ? 'installed' : 'browser',
+    resumed: saved ? 'yes' : 'no',
+  });
+  addEventListener('appinstalled', () => track('pwa_installed'));
 }
 
 /* Browser entry point. In node the file is loaded for its pure logic only. */
