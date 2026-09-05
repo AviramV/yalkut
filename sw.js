@@ -1,6 +1,6 @@
 /* Service worker — the release lever for this app.
    Bump VERSION, commit, push. Every open copy then offers "יש גרסה חדשה". */
-const VERSION = '1.1.0';
+const VERSION = '1.2.0';
 const CACHE = `yalkut-${VERSION}`;
 
 const ASSETS = [
@@ -8,6 +8,7 @@ const ASSETS = [
   'index.html',
   'app.css',
   'app.js',
+  'aptabase.js',
   'data.json',
   'manifest.json',
   'icon.svg',
