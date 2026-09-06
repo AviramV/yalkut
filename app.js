@@ -158,15 +158,12 @@ function coverOf(item) {
   return item.cover ? DATA.covers[item.cover] : null;
 }
 
-function rowHtml(inst, sameItemCount) {
+function rowHtml(inst) {
   const cover = coverOf(inst.item);
   const isPacked = !!checked[inst.key];
   const tags = [];
   if (cover) {
     tags.push(`<span class="cover-tag" style="--tag-bg:${esc(cover.dot)}33;--tag-ink:var(--ink)">${esc(cover.label)}</span>`);
-  }
-  if (sameItemCount > 1) {
-    tags.push(`<span class="dup-tag">צריך ${sameItemCount} כאלה</span>`);
   }
 
   return `
@@ -184,12 +181,6 @@ function rowHtml(inst, sameItemCount) {
 
 function render() {
   const instances = buildInstances();
-
-  // How many rows share the same underlying item — surfaced as "צריך N כאלה".
-  const perItem = new Map();
-  for (const inst of instances) {
-    perItem.set(inst.item.id, (perItem.get(inst.item.id) || 0) + 1);
-  }
 
   renderHeader(instances);
   renderItems(instances);
@@ -216,7 +207,7 @@ function render() {
       if (!inGroup.length) continue;
       html += `<div class="group-head"><span aria-hidden="true">${esc(group.icon)}</span>`
             + `<span>${esc(group.label)}</span><hr></div>`;
-      html += inGroup.map((i) => rowHtml(i, perItem.get(i.item.id))).join('');
+      html += inGroup.map((i) => rowHtml(i)).join('');
     }
 
     // Subject notes from the school list ("2 מחברות אדומות", water on sport days).

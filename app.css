@@ -324,17 +324,6 @@ textarea.paste:focus { background: var(--card); }
   background: var(--tag-bg, #F1F0EC);
   color: var(--tag-ink, var(--ink-soft));
 }
-.dup-tag {
-  font-size: 11px;
-  font-weight: 800;
-  padding: 2px 8px;
-  border-radius: 999px;
-  background: var(--warn-bg);
-  border: 1px solid var(--warn-rule);
-  color: var(--warn-ink);
-  font-variant-numeric: tabular-nums;
-}
-
 .note {
   font-size: 12px;
   background: var(--warn-bg);
