@@ -1,6 +1,6 @@
 /* Service worker — the release lever for this app.
    Bump VERSION, commit, push. Every open copy then offers "יש גרסה חדשה". */
-const VERSION = '1.2.2';
+const VERSION = '1.2.3';
 const CACHE = `yalkut-${VERSION}`;
 
 const ASSETS = [
