@@ -98,6 +98,22 @@ for (const [artName, stem] of [['עפרון', 'עפרונ'], ['מחק', 'מחק'
   assert.ok(!art.some((i) => i.item.name === artName), `${artName} duplicated into art lesson`);
 }
 
+// ---- which day to pack for ----
+// Dates are local time; 2026-10-12 is a Monday.
+const at = (iso) => new Date(iso);
+assert.strictEqual(app.schoolDay(at('2026-10-12T08:00')), 1, 'Monday morning packs Monday');
+assert.strictEqual(app.schoolDay(at('2026-10-12T22:30')), 2, 'Monday evening packs Tuesday');
+assert.strictEqual(app.schoolDay(at('2026-10-15T20:00')), 5, 'Thursday evening packs Friday');
+assert.strictEqual(app.schoolDay(at('2026-10-16T18:00')), 0, 'Friday evening skips Saturday');
+assert.strictEqual(app.schoolDay(at('2026-10-17T10:00')), 0, 'Saturday packs Sunday');
+assert.strictEqual(app.packLabel(at('2026-10-12T08:00')), 'היום');
+assert.strictEqual(app.packLabel(at('2026-10-12T22:30')), 'מחר');
+assert.strictEqual(app.packLabel(at('2026-10-17T10:00')), 'מחר');
+assert.strictEqual(app.packLabel(at('2026-10-16T18:00')), 'יום הלימודים הבא');
+// Last night's packing and this morning's check share one storage key.
+assert.strictEqual(app.dateKey(app.packDate(at('2026-10-12T22:30'))),
+  app.dateKey(app.packDate(at('2026-10-13T07:00'))));
+
 // ---- release hygiene ----
 // The footer version and the cache key must agree, or a release ships with
 // stale assets under a name that says otherwise.
