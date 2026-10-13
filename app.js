@@ -543,14 +543,17 @@ function wire() {
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
 
-  // A first visit is already the newest version. Its worker's clients.claim()
-  // fires controllerchange and, on iOS, can race statechange — without this
-  // guard a new parent got a reload flash and a bogus "new version" toast.
-  const hadController = !!navigator.serviceWorker.controller;
+  // A first visit is already the newest version: its worker's clients.claim()
+  // fires controllerchange and, on iOS, can race statechange. Only a worker
+  // replacing a *different* controller is an update — so a first visit gets
+  // no reload flash and no bogus toast, yet a tab left open still hears about
+  // the next release.
+  const sw = navigator.serviceWorker;
+  let controller = sw.controller;
 
-  navigator.serviceWorker.register('sw.js').then((reg) => {
+  sw.register('sw.js').then((reg) => {
     const offerReload = (worker) => {
-      if (!hadController) return;
+      if (!sw.controller || sw.controller === worker) return;
       track('update_offered');
       toast('יש גרסה חדשה', {
         label: 'רענן',
@@ -558,15 +561,13 @@ function registerServiceWorker() {
       });
     };
 
-    if (reg.waiting && navigator.serviceWorker.controller) offerReload(reg.waiting);
+    if (reg.waiting) offerReload(reg.waiting);
 
     reg.addEventListener('updatefound', () => {
       const installing = reg.installing;
       if (!installing) return;
       installing.addEventListener('statechange', () => {
-        if (installing.state === 'installed' && navigator.serviceWorker.controller) {
-          offerReload(installing);
-        }
+        if (installing.state === 'installed') offerReload(installing);
       });
     });
 
@@ -578,8 +579,10 @@ function registerServiceWorker() {
   }).catch(() => { /* offline or unsupported — the app runs without it */ });
 
   let reloading = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (reloading || !hadController) return;
+  sw.addEventListener('controllerchange', () => {
+    const wasControlled = !!controller;
+    controller = sw.controller;
+    if (reloading || !wasControlled) return;   // first claim, not an update
     reloading = true;
     location.reload();
   });
