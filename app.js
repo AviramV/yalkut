@@ -4,6 +4,7 @@
 
 const STORE_WEEK  = 'yalkut.week.v1';
 const STORE_TODAY = 'yalkut.today.v1';
+const UPDATE_FLAG = 'yalkut.updateApplied';
 
 const DAY_NAMES = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי'];
 const DAY_SHORT = ["א'", "ב'", "ג'", "ד'", "ה'", "ו'"];
@@ -32,20 +33,37 @@ function dateKey(d = new Date()) {
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
 }
 
-function schoolDay(d = new Date()) {
-  const dow = d.getDay();       // 0=Sun … 6=Sat
-  return dow <= 5 ? dow : 0;    // Saturday has no school; show Sunday
+/* The day being packed for. In the evening that's tomorrow — launch analytics
+   showed half the evening visitors tapping over to the next day by hand.
+   ponytail: one fixed cutoff hour; tune EVENING_HOUR if parents pack earlier. */
+const EVENING_HOUR = 17;
+
+function packDate(now = new Date()) {
+  const d = new Date(now);
+  if (d.getHours() >= EVENING_HOUR) d.setDate(d.getDate() + 1);
+  if (d.getDay() === 6) d.setDate(d.getDate() + 1);   // Saturday has no school
+  return d;
+}
+
+function schoolDay(now = new Date()) {
+  return packDate(now).getDay();   // 0=Sun … 5=Fri
+}
+
+function packLabel(now = new Date()) {
+  const ahead = Math.round((new Date(dateKey(packDate(now))) - new Date(dateKey(now))) / 864e5);
+  return ahead === 0 ? 'היום' : ahead === 1 ? 'מחר' : 'יום הלימודים הבא';
 }
 
 /* ---------------- storage ----------------
-   Today's state is date-stamped, so yesterday's ticks never carry over.
+   State is stamped with the date being packed for, so last night's ticks are
+   still there in the morning, and yesterday's never carry over.
    ponytail: the rollover happens on load, not at midnight. A tab left open
    overnight keeps yesterday's key until reload. Add a timer if that bites. */
 
 function loadToday() {
   try {
     const raw = JSON.parse(localStorage.getItem(STORE_TODAY) || '{}');
-    if (raw.date !== dateKey()) return null;
+    if (raw.date !== dateKey(packDate())) return null;
     return raw;
   } catch { return null; }
 }
@@ -53,7 +71,7 @@ function loadToday() {
 function saveToday() {
   try {
     localStorage.setItem(STORE_TODAY, JSON.stringify({
-      date: dateKey(),
+      date: dateKey(packDate()),
       day: selectedDay,
       text: $('pasteInput').value,
       subjects: activeIds,
@@ -226,7 +244,7 @@ function renderHeader(instances) {
 
   const names = activeIds.map((id) => subjectById.get(id)?.name).filter(Boolean);
   const isToday = selectedDay === schoolDay();
-  $('dayMeta').textContent = isToday ? 'היום' : 'לא היום — יום אחר במערכת';
+  $('dayMeta').textContent = isToday ? packLabel() : 'יום אחר במערכת';
 
   $('subjectsLine').innerHTML = names.length
     ? `<b>${names.length} מקצועות:</b> ${esc(names.join(', '))}`
@@ -526,24 +544,38 @@ function wire() {
 function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) return;
 
-  navigator.serviceWorker.register('sw.js').then((reg) => {
+  // A first visit is already the newest version: its worker's clients.claim()
+  // fires controllerchange and, on iOS, can race statechange. Only a worker
+  // replacing a *different* controller is an update — so a first visit gets
+  // no reload flash and no bogus toast, yet a tab left open still hears about
+  // the next release.
+  const sw = navigator.serviceWorker;
+  let controller = sw.controller;
+
+  sw.register('sw.js').then((reg) => {
     const offerReload = (worker) => {
+      if (!sw.controller || sw.controller === worker) return;
       track('update_offered');
       toast('יש גרסה חדשה', {
         label: 'רענן',
-        onClick: () => { track('update_applied'); worker.postMessage('skip-waiting'); },
+        // No request may leave the page here. Every request from a controlled
+        // page wakes the old worker — even the cross-origin analytics call —
+        // and if that lands mid-handover Chrome keeps the old worker and the
+        // new one never activates. So the event is sent after the reload.
+        onClick: () => {
+          try { sessionStorage.setItem(UPDATE_FLAG, '1'); } catch { /* lose one count */ }
+          worker.postMessage('skip-waiting');
+        },
       });
     };
 
-    if (reg.waiting && navigator.serviceWorker.controller) offerReload(reg.waiting);
+    if (reg.waiting) offerReload(reg.waiting);
 
     reg.addEventListener('updatefound', () => {
       const installing = reg.installing;
       if (!installing) return;
       installing.addEventListener('statechange', () => {
-        if (installing.state === 'installed' && navigator.serviceWorker.controller) {
-          offerReload(installing);
-        }
+        if (installing.state === 'installed') offerReload(installing);
       });
     });
 
@@ -555,8 +587,10 @@ function registerServiceWorker() {
   }).catch(() => { /* offline or unsupported — the app runs without it */ });
 
   let reloading = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (reloading) return;
+  sw.addEventListener('controllerchange', () => {
+    const wasControlled = !!controller;
+    controller = sw.controller;
+    if (reloading || !wasControlled) return;   // first claim, not an update
     reloading = true;
     location.reload();
   });
@@ -612,6 +646,13 @@ async function boot() {
 
   registerServiceWorker();
 
+  try {
+    if (sessionStorage.getItem(UPDATE_FLAG)) {
+      sessionStorage.removeItem(UPDATE_FLAG);
+      track('update_applied');
+    }
+  } catch { /* storage blocked */ }
+
   track('app_open', {
     day: selectedDay,
     subjects: activeIds.length,
@@ -628,6 +669,10 @@ if (typeof document !== 'undefined') {
   module.exports = {
     matchSubjects,
     buildInstances,
+    schoolDay,
+    packDate,
+    packLabel,
+    dateKey,
     load(data) {
       DATA = data;
       subjectById.clear(); itemById.clear();
