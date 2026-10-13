@@ -4,6 +4,7 @@
 
 const STORE_WEEK  = 'yalkut.week.v1';
 const STORE_TODAY = 'yalkut.today.v1';
+const UPDATE_FLAG = 'yalkut.updateApplied';
 
 const DAY_NAMES = ['ראשון', 'שני', 'שלישי', 'רביעי', 'חמישי', 'שישי'];
 const DAY_SHORT = ["א'", "ב'", "ג'", "ד'", "ה'", "ו'"];
@@ -557,7 +558,14 @@ function registerServiceWorker() {
       track('update_offered');
       toast('יש גרסה חדשה', {
         label: 'רענן',
-        onClick: () => { track('update_applied'); worker.postMessage('skip-waiting'); },
+        // No request may leave the page here. Every request from a controlled
+        // page wakes the old worker — even the cross-origin analytics call —
+        // and if that lands mid-handover Chrome keeps the old worker and the
+        // new one never activates. So the event is sent after the reload.
+        onClick: () => {
+          try { sessionStorage.setItem(UPDATE_FLAG, '1'); } catch { /* lose one count */ }
+          worker.postMessage('skip-waiting');
+        },
       });
     };
 
@@ -637,6 +645,13 @@ async function boot() {
   }
 
   registerServiceWorker();
+
+  try {
+    if (sessionStorage.getItem(UPDATE_FLAG)) {
+      sessionStorage.removeItem(UPDATE_FLAG);
+      track('update_applied');
+    }
+  } catch { /* storage blocked */ }
 
   track('app_open', {
     day: selectedDay,

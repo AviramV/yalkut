@@ -118,14 +118,14 @@ assert.strictEqual(app.dateKey(app.packDate(at('2026-10-12T22:30'))),
 // The footer version and the cache key must agree, or a release ships with
 // stale assets under a name that says otherwise.
 const fs = require('fs');
-const swVersion = fs.readFileSync('./sw.js', 'utf8').match(/^const VERSION = '([^']+)';/m)[1];
+const swVersion = fs.readFileSync('./sw.js', 'utf8').match(/^const VERSION = ['"]([^'"]+)['"];/m)[1];
 assert.strictEqual(swVersion, data.version,
   `version mismatch: sw.js=${swVersion} data.json=${data.version} — bump both`);
 
 // Every precached path must exist, or install() rejects and offline breaks.
 for (const rel of fs.readFileSync('./sw.js', 'utf8')
   .match(/const ASSETS = \[([\s\S]*?)\];/)[1]
-  .match(/'([^']+)'/g).map((q) => q.slice(1, -1))) {
+  .match(/['"]([^'"]+)['"]/g).map((q) => q.slice(1, -1))) {
   if (rel === './') continue;
   assert.ok(fs.existsSync(rel), `sw.js precaches a missing file: ${rel}`);
 }

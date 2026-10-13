@@ -66,7 +66,7 @@ to it. Bumping it is the release.
 ```sh
 V=1.0.1
 sed -i '' "s/\"version\": \".*\"/\"version\": \"$V\"/" data.json
-sed -i '' "s/^const VERSION = '.*';/const VERSION = '$V';/" sw.js
+sed -i '' "s/^const VERSION = .*;/const VERSION = '$V';/" sw.js
 node test.js && git commit -am "release $V" && git push
 ```
 
